@@ -1,0 +1,157 @@
+/* ============================================================
+   AutoFlow Sidebar — Minimal dark-themed panel (greeting + chatbar)
+   Sits on the right edge of the viewport as a collapsible sidebar
+   ============================================================ */
+
+/* --- Design Tokens --- */
+:root {
+  --af-bg-primary: #1a1a1a;
+  --af-bg-secondary: #242424;
+  --af-bg-hover: #2e2e2e;
+  --af-border: #333333;
+  --af-text-primary: #f0f0f0;
+  --af-text-muted: #6b6b6b;
+  --af-accent: #e8a84c;
+  --af-accent-subtle: rgba(232, 168, 76, 0.1);
+  --af-send-btn: #d9534f;
+  --af-send-btn-hover: #e8645f;
+  --af-radius-sm: 6px;
+  --af-radius-lg: 14px;
+  --af-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --af-transition: 0.2s ease;
+  --af-sidebar-width: 340px;
+  --af-font: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* --- Sidebar Container --- */
+#autoflow-sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: var(--af-sidebar-width);
+  height: 100vh;
+  background: var(--af-bg-primary);
+  border-left: 1px solid var(--af-border);
+  box-shadow: var(--af-shadow);
+  font-family: var(--af-font);
+  color: var(--af-text-primary);
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+  transition: transform var(--af-transition);
+  overflow: hidden;
+}
+
+/* Collapsed — slides off-screen */
+#autoflow-sidebar.af-collapsed {
+  transform: translateX(100%);
+}
+
+/* --- Toggle Button --- */
+#autoflow-toggle {
+  position: fixed;
+  top: 50%;
+  right: var(--af-sidebar-width);
+  transform: translateY(-50%);
+  width: 28px;
+  height: 64px;
+  background: var(--af-bg-secondary);
+  border: 1px solid var(--af-border);
+  border-right: none;
+  border-radius: var(--af-radius-sm) 0 0 var(--af-radius-sm);
+  color: var(--af-accent);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  transition: right var(--af-transition), background var(--af-transition);
+}
+
+#autoflow-toggle:hover {
+  background: var(--af-bg-hover);
+}
+
+/* When collapsed, toggle hugs viewport edge */
+#autoflow-toggle.af-collapsed {
+  right: 0;
+}
+
+/* --- Header --- */
+.af-header {
+  padding: 24px 20px;
+}
+
+.af-greeting {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--af-text-primary);
+}
+
+.af-greeting .af-sparkle {
+  color: var(--af-accent);
+}
+
+/* --- Spacer pushes chatbar to bottom --- */
+.af-spacer {
+  flex: 1;
+}
+
+/* --- Chatbar (bottom) --- */
+.af-chatbar {
+  padding: 16px;
+}
+
+.af-chatbar-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--af-bg-secondary);
+  border: 1px solid var(--af-border);
+  border-radius: var(--af-radius-lg);
+  padding: 4px 4px 4px 14px;
+  transition: border-color var(--af-transition);
+}
+
+/* Glow border on focus */
+.af-chatbar-inner:focus-within {
+  border-color: var(--af-send-btn);
+  box-shadow: 0 0 0 2px rgba(217, 83, 79, 0.15);
+}
+
+.af-chatbar-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--af-text-primary);
+  font-size: 13px;
+  font-family: var(--af-font);
+}
+
+.af-chatbar-input::placeholder {
+  color: var(--af-text-muted);
+}
+
+/* Red send button */
+.af-chatbar-send {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--af-radius-sm);
+  border: none;
+  background: var(--af-send-btn);
+  color: #ffffff;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--af-transition);
+  flex-shrink: 0;
+}
+
+.af-chatbar-send:hover {
+  background: var(--af-send-btn-hover);
+}

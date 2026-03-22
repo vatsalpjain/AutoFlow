@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "AutoFlow",
+  "version": "1.0.0",
+  "description": "AI-powered n8n workflow generator — sidebar chatbar injected into n8n UI",
+
+  "content_scripts": [
+    {
+      "matches": ["http://localhost:5678/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "permissions": []
+}

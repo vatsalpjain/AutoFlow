@@ -1,0 +1,40 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+.env/
+venv/
+
+.env/
+venv/
+.env
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ML artifacts (large files)
+*.model
+*.bin
+models/
+checkpoints/
+
+# Logs & cache
+logs/
+*.log
+.cache/
+
+# Credentials
+.env.local
+.env.*.local
+data/
