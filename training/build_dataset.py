@@ -23,7 +23,7 @@ if not GROQ_API_KEY or GROQ_API_KEY == "YOUR_GROQ_API_KEY":
     raise RuntimeError("Set GROQ_API_KEY in .env file (project root)")
 
 MODEL           = "llama-3.1-8b-instant"
-MAX_RECORDS     = 500
+MAX_RECORDS     = 100
 
 # Nodes that are pure UI decoration — strip them from output
 SKIP_NODE_TYPES = {
@@ -179,7 +179,7 @@ def rewrite_instruction(title: str, context: str) -> str:
             {"role": "user",   "content": f"Title: {title}\nContext: {short_context}"}
         ],
         max_tokens=100,
-        temperature=0.7  # ← INCREASED from 0.3 for more variety
+        temperature=0.7 
     )
     raw = response.choices[0].message.content.strip()
     return _clean_groq_output(raw)

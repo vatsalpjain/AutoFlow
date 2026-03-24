@@ -8,6 +8,18 @@
 (function () {
   "use strict";
 
+  const WORKFLOW_ID_STORAGE_KEY = "autoflow_current_workflow_id";
+
+  function extractWorkflowIdFromUrl() {
+    // n8n workflow editor URL usually looks like /workflow/<id>.
+    const match = window.location.pathname.match(/\/workflow\/([^/]+)/);
+    return match ? match[1] : null;
+  }
+
+  function getCurrentWorkflowId() {
+    return extractWorkflowIdFromUrl() || sessionStorage.getItem(WORKFLOW_ID_STORAGE_KEY);
+  }
+
   // --- Prevent double-injection if script runs multiple times ---
   if (document.getElementById("autoflow-sidebar")) return;
 
@@ -77,13 +89,65 @@
   const chatInput = document.getElementById("af-chatbar-input");
   const chatSend = document.getElementById("af-chatbar-send");
 
-  function handleSend() {
+  async function handleSend() {
     const prompt = chatInput.value.trim();
     if (!prompt) return;
 
-    // TODO: Replace with fetch() to FastAPI backend
-    console.log("[AutoFlow] Prompt submitted:", prompt);
-    chatInput.value = "";
+    // Give instant UI feedback so users know generation is in progress.
+    chatSend.disabled = true;
+    const originalSymbol = chatSend.textContent;
+    chatSend.textContent = "...";
+
+    try {
+      const response = await fetch("http://localhost:8000/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt,
+          workflow_id: getCurrentWorkflowId(),
+        }),
+      });
+
+      if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(errText || `Request failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("[AutoFlow] Backend response:", data);
+
+      // n8n API creates the workflow but does not auto-open it in UI.
+      // Navigate to the created workflow so users immediately see the render.
+      const workflowId =
+        data?.n8n?.id ||
+        data?.n8n?.data?.id ||
+        data?.id;
+
+      if (workflowId) {
+        // Persist id so future requests can update the same workflow.
+        sessionStorage.setItem(WORKFLOW_ID_STORAGE_KEY, workflowId);
+
+        const workflowUrl = `${window.location.origin}/workflow/${workflowId}`;
+        const currentUrl = `${window.location.origin}${window.location.pathname}`;
+
+        if (currentUrl === workflowUrl) {
+          // Force refresh so the editor reloads updated workflow data.
+          window.location.reload();
+        } else {
+          window.location.assign(workflowUrl);
+        }
+      }
+
+      chatInput.value = "";
+    } catch (error) {
+      console.error("[AutoFlow] Failed to generate workflow:", error);
+    } finally {
+      // Always restore the send button state after the request completes.
+      chatSend.disabled = false;
+      chatSend.textContent = originalSymbol;
+    }
   }
 
   // Send on button click
